@@ -1,0 +1,269 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<div class="factura">
+  <div class="cart-document-type">
+    <h5>Tipo de documento</h5>
+    <span class="cart__subtotal">
+      <input required id="btn-boleta" class="styled-checkbox required btn-boleta document-type-selector" type="radio" name="attributes[shoppingcart-tags]" value="boleta" checked="checked">
+      <label for="btn-boleta" class="cart-boleta">Boleta</label>
+      <input required id="btn-factura" class="styled-checkbox required btn-factura document-type-selector" type="radio" name="attributes[shoppingcart-tags]" value="factura">
+      <label for="btn-factura" class="cart-factura">Factura</label>
+    </span>
+  </div>
+  <div class="billing-menu" >
+    <p class="cart-attribute__field cart-attribute__field-rut">
+      <label class="rut-field" for="rut">RUT</label>
+      <input id="rut" type="text" name="attributes[RUT]" placeholder="Ingresa tu RUT" value="{{ cart.attributes["RUT"] }}">
+    </p>
+    <p class="cart-attribute__field cart-attribute__field-razon">
+      <label class="razon-field" for="razon">Razón social</label>
+      <input id="razon" type="text" name="attributes[razon]" placeholder="Ingresa tu Razón Social" value="{{ cart.attributes["razon"] }}">
+    </p>
+    <p class="cart-attribute__field cart-attribute__field-giro">
+      <label class="giro-field" for="giro">Giro</label>
+      <input id="giro" type="text" name="attributes[giro]" placeholder="Ingresa tu Giro" value="{{ cart.attributes["giro"] }}">
+    </p>
+    <p class="cart-attribute__field cart-attribute__field-direccion">
+      <label class="giro-field" for="giro">Dirección de la empresa</label>
+      <input id="direccion" type="text" name="attributes[direccion]" placeholder="Dirección de la empresa" value="{{ cart.attributes["direccion"] }}">
+    </p>
+  </div>
+</div>
+
+<script>
+  defer(function () {
+    alert("jQuery is now loaded");
+  });
+
+  function defer(method) {
+    if (window.jQuery) {
+      var actions = {
+        "factura": function() {
+          $(".billing-menu").css("display", "block");
+        },
+        "boleta": function() {
+          $(".billing-menu").css("display", "none");
+        }
+      }
+      $(".document-type-selector").on("change", function() {
+        actions[$(this).val()]();
+      });
+
+      $('input#rut').on('input', function() {
+        var valor = rut.value.replace('.','');
+        valor     = valor.replace('-','');
+        cuerpo    = valor.slice(0,-1);
+        dv        = valor.slice(-1).toUpperCase();
+        rut.value = cuerpo + '-'+ dv;
+        if(cuerpo.length < 7) {
+          $(this).addClass('invalido').removeClass('valido');
+          rut.setCustomValidity("RUT Incompleto"); return false;
+        } else {
+          $(this).addClass('valido').removeClass('invalido');
+        }
+        suma     = 0;
+        multiplo = 2;
+        for (i = 1; i <= cuerpo.length; i++) {
+          index = multiplo * valor.charAt(cuerpo.length - i);
+          suma  = suma + index;
+          if (multiplo < 7) { multiplo = multiplo + 1; } else { multiplo = 2; }
+        }
+        dvEsperado = 11 - (suma % 11);
+        dv         = (dv == 'K') ? 10 : dv;
+        dv         = (dv == 0) ? 11 : dv;
+        // Validar que el Cuerpo coincide con su Dígito Verificador
+        if(dvEsperado != dv) {
+          $(this).addClass('invalido').removeClass('valido');
+          rut.setCustomValidity("RUT Inválido");
+          return false;
+        } else {
+          $(this).addClass('valido').removeClass('invalido');
+        }
+        // Si todo sale bien, eliminar errores (decretar que es válido)
+        rut.setCustomValidity('');
+      });
+    } else {
+        setTimeout(function() { defer(method) }, 50);
+    }
+
+    $('input#giro').on('change keyup keydown', function () {
+      $.post('/cart.js', {
+        attributes: {
+        'shoppingcart-tags': 'FACTURA'
+      }
+      }).done(function () {
+      });
+    });
+
+    $('input#rut').on('change keyup keydown', function () {
+      $.post('/cart.js', {
+        attributes: {
+        'RUT': $(this).val()
+      }
+      }).done(function () {
+      });
+    });
+
+    $('input#razon').on('change keyup keydown', function () {
+      $.post('/cart.js', {
+        attributes: {
+        'Razón social': $(this).val()
+      }
+      }).done(function () {
+      });
+    });
+
+    $('input#giro').on('change keyup keydown', function () {
+      $.post('/cart.js', {
+        attributes: {
+        'Giro': $(this).val(),
+      }
+      }).done(function () {
+      });
+    });
+
+    $('input#direccion').on('change keyup keydown', function () {
+      $.post('/cart.js', {
+        attributes: {
+        'Dirección de la empresa': $(this).val(),
+      }
+      }).done(function () {
+      });
+    });
+
+  }
+
+</script>
+<style>
+
+  .factura {
+    background-color: transparent;
+    font-size: 1em;
+    padding: 15px 0 20px;
+    margin: 10px 0 20px;
+    border-top: 1px solid #e1e3e4;
+    border-bottom: 1px solid #e1e3e4;
+    text-align: initial;
+  }
+
+  .factura h5 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-transform: none;
+  }
+
+  .factura a {
+    color: #000;
+  }
+
+  .factura .styled-checkbox {
+    opacity: 0;
+    position: absolute;
+  }
+
+  .factura .styled-checkbox+label {
+    cursor: pointer;
+    display: inline;
+    padding: 0 !important;
+    position: relative;
+  }
+
+  .factura .styled-checkbox+label:first-of-type {
+    margin-right: 15px;
+  }
+
+  .factura .styled-checkbox+label small {
+    display: none;
+  }
+
+  .styled-checkbox+label:before {
+    background-color: #f1f1f3;
+    content: "";
+    display: inline-block;
+    height: 20px;
+    margin-right: 10px;
+    position: relative;
+    top: -3px;
+    vertical-align: text-top;
+    width: 20px;
+  }
+
+  .styled-checkbox:checked+label:before {
+    background-color: rgba(0, 186, 219, 0.8);
+  }
+
+  .styled-checkbox:checked+label:after {
+    background: white;
+    box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
+    content: "";
+    height: 2px;
+    left: 5px;
+    position: absolute;
+    top: 6px;
+    transform: rotate(45deg);
+    width: 2px;
+    -webkit-transform: rotate(45deg);
+  }
+
+  .factura .billing-menu {
+    display: none;
+    margin-top: 10px;
+  }
+
+  .factura .billing-menu .cart-attribute__field {
+    display: block;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .factura .billing-menu label {
+    display: none;
+  }
+
+  .factura .billing-menu input {
+    appearance: none;
+    background-color: #f1f1f3;
+    -webkit-appearance: none;
+    border: 0;
+    font-size: 14px;
+    padding: 10px;
+    outline: none;
+    width: 100%;
+  }
+
+  .factura .billing-menu input.valido {
+    border: 1px solid #22aa73;
+  }
+
+  .factura .billing-menu input.invalido {
+    border: 1px solid #e21c24;
+  }
+
+  @media only screen and (min-width : 100px) and (max-width : 830px) {
+    .factura {
+      padding: 4vw 4vw 2vw;
+    }
+
+    .factura h5 {
+      margin-bottom: 10px;
+    }
+
+    .factura .styled-checkbox+label {
+      margin-bottom: 10px;
+      padding-left: 30px !important;
+    }
+
+    .factura .styled-checkbox:checked+label:before {
+      left: 0;
+    }
+
+    .factura .styled-checkbox+label:before {
+      left: 0;
+    }
+
+    .factura .styled-checkbox:checked+label:after {
+      top: 6px;
+    }
+  }
+</style>

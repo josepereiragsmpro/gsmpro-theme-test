@@ -1,0 +1,270 @@
+<!doctype html>
+
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+<head>
+    <meta name="facebook-domain-verification" content="kx82eh67p2flkowdoll8pigwh2hhlx" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="theme-color" content="{{ settings.accent_color }}">
+
+    {%- capture seo_page_title -%}
+      {%- if request.page_type == 'search' and search.terms != blank -%}
+        {{ search.terms | split: ' AND ' | last }} - {{ shop.name }}
+      {%- else -%}
+        {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} - {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name  %} - {{ shop.name }}{% endunless %}
+      {%- endif -%}
+    {%- endcapture -%}
+
+    <title>{{- seo_page_title -}}</title>
+
+    {% if request.path contains 'blogs/noticias/tagged' %} 
+      <meta name="description" content="Sea el primero en enterarse de las últimas novedades y tendencias en el mundo de la tecnología. Visita la {{ current_tags }} noticias etiqueta para más.">
+    {% elsif request.path contains 'blogs/tips/tagged' %} 
+      <meta name="description" content="Sea el primero en enterarse de las últimas novedades y tendencias en el mundo de la tecnología. Visita la {{ current_tags }} tips etiqueta para más.">
+    {% elsif request.path contains '/collections/' and page_description == blank %} 
+      <meta name="description" content="Explore {{ page_title }} selección de productos de la marca Ipega disponibles en GSMpro.cl. Encuentra aquí los accesorios perfectos para ti.{% if current_page != 1 %} {{ 'general.meta.page' | t: page: current_page }}{% endif %}">
+    {% else %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {%- if settings.favicon -%}
+      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '96x96' }}" type="image/png">
+    {%- endif -%}
+    {% render 'social-meta-tags' %}
+
+{% render 'pagefly-head' %}
+{{ content_for_header }}
+{% if template contains 'product' and pageUrl contains '?pr_prod_strat' %}
+  <meta name="robots" content="noindex, nofollow">
+  {% elsif template == '404' or pageUrl contains '?variant=' %}
+  <meta name="robots" content="noindex, nofollow">
+  {% elsif pageUrl contains 'vendors' %}
+  <meta name="robots" content="noindex, nofollow">
+  {% elsif template == 'cart' %}
+  <meta name="robots" content="noindex, nofollow">
+  {% else %}
+  <meta name="robots" content="index, follow">
+{% endif %}
+
+  
+<!-- Etiqueta Global -->
+<script type="text/javascript">const observer=new MutationObserver(e=>{e.forEach(({addedNodes:e})=>{e.forEach(e=>{1===e.nodeType&&"IFRAME"===e.tagName&&(e.src.includes("youtube.com")||e.src.includes("vimeo.com"))&&(e.setAttribute("loading","lazy"),e.setAttribute("data-src",e.src),e.removeAttribute("src")),1===e.nodeType&&"IMG"===e.tagName&&(e.src.includes(".gif")||e.src.includes("vimo.com"))&&(e.setAttribute("loading","lazy"),e.setAttribute("data-src",e.src),e.removeAttribute("src")),1!==e.nodeType||"IMG"!==e.tagName||e.src.includes("data:image")||e.setAttribute("loading","lazy"),1===e.nodeType&&"SCRIPT"===e.tagName&&("analytics"==e.className&&(e.type="text/lazyload"),"boomerang"==e.className&&(e.type="text/lazyload"),e.innerHTML.includes("asyncLoad")&&(e.innerHTML=e.innerHTML.replace("if(window.attachEvent)","document.addEventListener('asyncLazyLoad',function(event){asyncLoad();});if(window.attachEvent)").replaceAll(", asyncLoad",", function(){}")),(e.innerHTML.includes("PreviewBarInjector")||e.innerHTML.includes("adminBarInjector"))&&(e.innerHTML=e.innerHTML.replace("DOMContentLoaded","asyncLazyLoad")),(e.src.includes("assets/storefront")||e.src.includes("assets/shopify_pay")||e.src.includes("gtag/js")||e.src.includes("pixel.js")||e.src.includes("front_scripts")||e.src.includes("eventpromotionbar.js")||e.src.includes("sho.embedx.io")||e.src.includes("pixel"))&&(e.setAttribute("data-src",e.src),e.removeAttribute("src")),(e.innerText.includes("insertBefore(j,f)")||e.innerText.includes("gtm.start"))&&(e.type="text/lazyload"))})})});observer.observe(document.documentElement,{childList:!0,subtree:!0});</script>
+<script async data-src="https://www.googletagmanager.com/gtag/js?id=AW-835084198"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-835084198');
+ </script>
+  
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WCNP2PP');</script>
+<!-- End Google Tag Manager -->
+
+   {% if template contains 'collection' and current_tags %}
+<link rel="canonical" href="{{ shop.url }} {{ collection.url }}" />
+{% else %}
+<link rel="canonical" href="{{ canonical_url }}" />
+{% endif %}
+
+    {%- comment -%}Few prefech to increase performance on commonly used third-parties{%- endcomment -%}
+    <link rel="preload" as="style" href="{{ 'theme.css' | asset_url }}">
+<!--     <link rel="preconnect" href="https://cdn.shopify.com">
+    <link rel="preconnect" href="https://fonts.shopifycdn.com">
+    <link rel="dns-prefetch" href="https://productreviews.shopifycdn.com">
+    <link rel="dns-prefetch" href="https://ajax.googleapis.com">
+    <link rel="dns-prefetch" href="https://maps.googleapis.com">
+    <link rel="dns-prefetch" href="https://maps.gstatic.com"> -->
+
+    {% render 'css-variables' %}
+
+    {{ content_for_header }}
+
+    <link rel="stylesheet" href="{{ 'theme.css' | asset_url }}">
+
+    {% render 'microdata-schema' %}
+
+    <script>
+      // This allows to expose several variables to the global scope, to be used in scripts
+      window.theme = {
+        pageType: {{ request.page_type | json }},
+        cartCount: {{ cart.item_count | json }},
+        moneyFormat: {{ shop.money_format | json }},
+        moneyWithCurrencyFormat: {{ shop.money_with_currency_format | json }},
+        showDiscount: {% if settings.show_discount %}true{% else %}false{% endif %},
+        discountMode: {{ settings.discount_mode | json }},
+        searchMode: {{ settings.search_mode | json }},
+        cartType: {{ settings.cart_type | json }}
+      };
+
+      window.routes = {
+        rootUrl: {{ routes.root_url | json }},
+        cartUrl: {{ routes.cart_url | json }},
+        cartAddUrl: {{ routes.cart_add_url | json }},
+        cartChangeUrl: {{ routes.cart_change_url | json }},
+        searchUrl: {{ routes.search_url | json }},
+        productRecommendationsUrl: {{ routes.product_recommendations_url | json }}
+      };
+
+      window.languages = {
+        collectionOnSaleLabel: {{ 'collection.product.discount_html' | t | json }},
+        productFormUnavailable: {{ 'product.form.unavailable' | t | json }},
+        productFormAddToCart: {% if product.template_suffix == 'pre-order' %}{{ 'product.form.pre_order' | t | json }}{% else %}{{ 'product.form.add_to_cart' | t | json }}{% endif %},
+        productFormSoldOut: {{ 'product.form.sold_out' | t | json }},
+        shippingEstimatorNoResults: {{ 'cart.shipping_estimator.no_results_title' | t | json }},
+        shippingEstimatorOneResult: {{ 'cart.shipping_estimator.one_result_title' | t | json }},
+        shippingEstimatorMultipleResults: {{ 'cart.shipping_estimator.multiple_results_title' | t | json }},
+        shippingEstimatorErrors: {{ 'cart.shipping_estimator.errors' | t | json }}
+      };
+
+      window.lazySizesConfig = {
+        loadHidden: false,
+        hFac: 0.8,
+        expFactor: 3,
+        customMedia: {
+          '--phone': '(max-width: 640px)',
+          '--tablet': '(min-width: 641px) and (max-width: 1023px)',
+          '--lap': '(min-width: 1024px)'
+        }
+      };
+
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    </script>
+
+    {%- if request.page_type == 'customers/addresses' -%}
+      <script src="{{ 'shopify_common.js' | shopify_asset_url }}" defer></script>
+      <script src="{{ 'customer_area.js' | shopify_asset_url }}" defer></script>
+    {%- endif -%}
+
+    <script data-src="//cdn.polyfill.io/v3/polyfill.min.js?unknown=polyfill&features=fetch,Element.prototype.closest,Element.prototype.matches,Element.prototype.remove,Element.prototype.classList,Array.prototype.includes,Array.prototype.fill,String.prototype.includes,String.prototype.padStart,Object.assign,CustomEvent,Intl,URL,DOMTokenList,IntersectionObserver,IntersectionObserverEntry" defer></script>
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+    <script src="{{ 'custom.js' | asset_url }}" defer></script>
+
+    {%- if request.page_type != 'cart' -%}
+      <script>
+        (function () {
+          window.onpageshow = function() {
+            // We force re-freshing the cart content onpageshow, as most browsers will serve a cache copy when hitting the
+            // back button, which cause staled data
+            document.documentElement.dispatchEvent(new CustomEvent('cart:refresh', {
+              bubbles: true,
+              detail: {scrollToTop: false}
+            }));
+          };
+        })();
+      </script>
+    {%- endif -%}
+ 
+<!-- script comentado 06-05-2024 clopez
+<script type="text/javascript"src="https://ohmyad.com/pixel.js/?id=99e8ad9a"></script>
+06-05-2024 clopez script comentado -->
+                    
+    <!-- Upsell & Cross Sell Kit by Logbase - Starts -->
+      <script data-src='https://upsell-app.logbase.io/lb-upsell.js?shop=importadora-gsmpro-ltda.myshopify.com' defer></script>
+    <!-- Upsell & Cross Sell Kit by Logbase - Ends -->
+
+{% capture boostersnippet %}{% include "booster-apps-common" %}{% endcapture %}{% unless boostersnippet contains "Liquid error" %}{{ boostersnippet }}{% endunless %}
+<img alt="icon" width="1400" height="1400" style="pointer-events: none; position: absolute; top: 0; left: 0; width: 99vw; height: 99vh; max-width: 99vw; max-height: 99vh;"  src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSI5OTk5OXB4IiBoZWlnaHQ9Ijk5OTk5cHgiIHZpZXdCb3g9IjAgMCA5OTk5OSA5OTk5OSIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48ZyBzdHJva2U9Im5vbmUiIGZpbGw9Im5vbmUiIGZpbGwtb3BhY2l0eT0iMCI+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9Ijk5OTk5IiBoZWlnaHQ9Ijk5OTk5Ij48L3JlY3Q+IDwvZz4gPC9zdmc+">{% include 'bucks-cc' %}
+            
+                    
+{% render 'gsf-conversion-pixels' %}
+
+  {% render 'fierymayo' %}
+</head>
+      <style>
+a.nav-dropdown__link.link.color-red, a.mobile-menu__nav-link.h.color-red {
+    color: red;
+}
+</style>       
+             
+
+  <body class="warehouse--v1 template-{{ request.page_type | handle }} {% if request.page_type contains '/' %}template-{{ request.page_type | split: '/' | last | handle }}{% endif %}" data-instant-intensity="viewport">
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCNP2PP"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    
+    <span class="loading-bar"></span>
+    
+    {% section 'announcement-bar' %}
+
+    {%- unless request.page_type == 'cart' -%}
+      {%- comment -%}As required by Shopify rules, popup must be removed on cart page to remove distraction{%- endcomment -%}
+      {% section 'popups' %}
+    {%- endunless -%}
+
+    {% section 'header' %}
+
+    <main id="main" role="main">
+      {{ content_for_layout }}
+    </main>
+
+    {%- if request.page_type == 'blog' or request.page_type == 'article' or request.page_type == 'page' -%}
+      {% section 'static-newsletter' %}
+    {%- endif -%}
+
+    {% section 'text-with-icons' %}
+    {% section 'footer' %}
+
+<!-- **BEGIN** Hextom CTB Integration // Main Include - DO NOT MODIFY -->
+    {% render 'hextom_ctb_main', product: product, customer: customer %}
+    <!-- **END** Hextom CTB Integration // Main Include - DO NOT MODIFY -->
+    <script type="text/javascript" data-src="https://cdn.hextom.com/js/eventpromotionbar.js?shop=importadora-gsmpro-ltda.myshopify.com"></script>
+
+<!-- sh-ssp-added -->
+    {% capture ssp %}
+{% render 'sh-ssp-theme-snippet' %}
+      {% endcapture %}
+      {{ ssp|replace:'src','data-src' }}
+<!-- /sh-ssp-added -->
+{% render 'spurit_po2_theme_snippet' %}
+  <script type="text/javascript">
+    let checkExist = setInterval(function() {
+    if ($('.notify-btn-group').length && $('.pre-order-2-message').length) {
+     
+        let $orderButton = $('span[class="pre-order-2-message"]');
+      let $notifyMeButton = $('.notify-btn-group').length > 0 ? $('.notify-btn-group').get(0): false;
+        $($orderButton).after($($notifyMeButton));
+      clearInterval(checkExist);
+      
+    }
+}, 100); 
+</script>
+
+{% capture sp %}
+
+  {% endcapture %}
+  {{ sp|replace:'src','data-src' }}
+<script async type="text/javascript" data-src="https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=TKvtkX"></script>
+
+<!-- PF EDT START -->
+<script type='text/javascript'>
+{%- if content_for_header contains 'shopify-product-customizer' -%}
+    {%- if product -%}
+        {%- if product.first_available_variant -%}
+            var pfProductId = {{ product.metafields.printful.is_synced | json }};
+            var pfEdt = {{ shop.metafields.printful.is_edt_enabled | json }};
+            var pfEdtTextColor = {{ shop.metafields.printful.edt_text_color | json }};
+            var pfEdtBackgroundColor = {{ shop.metafields.printful.edt_background_color | json }};
+            var pfEdtBorderColor = {{ shop.metafields.printful.edt_border_color | json }};  
+            var pfEdtUseDefaultStyling = {{ shop.metafields.printful.edt_default_style | json }};
+            var pfEdtTextAlignment = {{ shop.metafields.printful.edt_text_alignment | json }};
+            var pfEdtFlags = {
+                US: "{{ 'US.svg' | asset_url }}",CA: "{{ 'CA.svg' | asset_url }}",ES: "{{ 'ES.svg' | asset_url }}",LV: "{{ 'LV.svg' | asset_url }}",GB: "{{ 'GB.svg' | asset_url }}",DE: "{{ 'DE.svg' | asset_url }}",FR: "{{ 'FR.svg' | asset_url }}",AU: "{{ 'AU.svg' | asset_url }}",JP: "{{ 'JP.svg' | asset_url }}",NZ: "{{ 'NZ.svg' | asset_url }}",IT: "{{ 'IT.svg' | asset_url }}",BR: "{{ 'BR.svg' | asset_url }}",KR: "{{ 'KR.svg' | asset_url }}",NL: "{{ 'NL.svg' | asset_url }}",GB: "{{ 'GB.svg' | asset_url }}",US: "{{ 'US.svg' | asset_url }}",
+            };
+        {%- else -%}
+            var pfEdt = 0;
+        {%- endif -%}
+    {%- endif -%}
+{%- endif -%}
+</script>
+<!-- PF EDT END -->
+</body>
+   <script type="text/javascript" defer>var script_loaded=!1;function loadJSscripts(){script_loaded||(void 0!==observer&&observer.disconnect(),void 0!==window.yett&&window.yett.unblock(),script_loaded=!0,document.querySelectorAll("iframe[data-src], script[data-src], img[data-src]").forEach(e=>{datasrc=e.dataset.src,null!=datasrc&&(e.src=datasrc)}),document.querySelectorAll("link[data-href]").forEach(e=>{datahref=e.dataset.href,null!=datahref&&(e.href=datahref)}),document.querySelectorAll("script[type='text/lazyload']").forEach(e=>{var t=document.createElement("script");for(a=0;a<e.attributes.length;a++){var r=e.attributes[a];t.setAttribute(r.name,r.value)}t.type="text/javascript",t.innerHTML=e.innerHTML,e.parentNode.insertBefore(t,e),e.parentNode.removeChild(e)}),document.dispatchEvent(new CustomEvent("asyncLazyLoad")))}var activityEvents=["mousedown","mousemove","keydown","scroll","touchstart","click","keypress","touchmove"];activityEvents.forEach(function(e){window.addEventListener(e,loadJSscripts,!1)});</script>
+{{ "//cdn.shopify.com/s/files/1/0644/2975/2553/t/2/assets/luminasonic.js" | script_tag}}
+</html>
